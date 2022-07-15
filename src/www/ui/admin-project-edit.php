@@ -101,7 +101,7 @@ class project_properties extends FO_Plugin
     $formVars["folderListOption"] = FolderListOption(-1, 0, 1, $FolderSelectId);
     $formVars["folder_name"] = $Folder['folder_name'];
     $formVars["folder_desc"] = $Folder['folder_desc'];
-    return $this->renderString("admin-folder-edit-form.html.twig",$formVars);
+    return $this->renderString("admin-project-edit-form.html.twig",$formVars);
   }
 }
 $NewPlugin = new project_properties;

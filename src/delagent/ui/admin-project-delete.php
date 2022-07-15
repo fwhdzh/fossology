@@ -54,12 +54,12 @@ class admin_project_delete extends FO_Plugin
   {
     $splitFolder = explode(" ",$folderpk);
     if (! $this->folderDao->isFolderAccessible($splitFolder[1], $userId)) {
-      $text = _("No access to delete this folder");
+      $text = _("No access to delete this project");
       return ($text);
     }
     /* Can't remove top folder */
     if ($splitFolder[1] == FolderGetTop()) {
-      $text = _("Can Not Delete Root Folder");
+      $text = _("Can Not Delete Root Project");
       return ($text);
     }
     /* Get the folder's name */
@@ -114,19 +114,19 @@ class admin_project_delete extends FO_Plugin
           $this->vars['message'] =  $text . $Folder['folder_name'] . $text1 . $rc;
         }
       } else {
-        $text = _("Cannot delete this folder :: Permission denied");
+        $text = _("Cannot delete this project :: Permission denied");
         $this->vars['message'] = $text;
       }
     }
 
     $V= "<form method='post'>\n"; // no url = this url
-    $text  =  _("Select the folder to");
+    $text  =  _("Select the project to");
     $text1 = _("delete");
     $V.= "$text <em>$text1</em>.\n";
     $V.= "<ul>\n";
     $text = _("This will");
     $text1 = _("delete");
-    $text2 = _("the folder, all subfolders, and all uploaded files stored within the folder!");
+    $text2 = _("the project, all subprojects, and all uploaded files stored within the project!");
     $V.= "<li>$text <em>$text1</em> $text2\n";
     $text = _("Be very careful with your selection since you can delete a lot of work!");
     $V.= "<li>$text\n";
@@ -135,10 +135,10 @@ class admin_project_delete extends FO_Plugin
     $text = _("THERE IS NO UNDELETE. When you select something to delete, it will be removed from the database and file repository.");
     $V.= "<li>$text\n";
     $V.= "</ul>\n";
-    $text = _("Select the folder to delete:  ");
+    $text = _("Select the project to delete:  ");
     $V.= "<P>$text\n";
     $V.= "<select name='folder' class='ui-render-select2'>\n";
-    $text = _("select folder");
+    $text = _("select project");
     $V.= "<option value='' disabled selected>[$text]</option>\n";
     $V.= FolderListOption(-1, 0, 1, -1, true);
     $V.= "</select><P />\n";

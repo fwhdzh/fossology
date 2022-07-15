@@ -23,6 +23,16 @@
   </div>
 </li>
 {% endblock %}
+
+{% block projectselect %}
+<li>
+  <div class="form-group">
+    <label for="projectUploader">{{ 'Select the project to upload'| trans }}:</label>
+    <input type="file" class="form-control-file" id="projectUploader" name="{{ projectInputName }}[]" multiple="multiple">
+  </div>
+</li>
+{% endblock %}
+
 {% block filedescription %}
 <li class="mb-4">
   Description(s)

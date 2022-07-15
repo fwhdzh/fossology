@@ -91,7 +91,7 @@ class project_create extends FO_Plugin
     $root_folder_pk = GetUserRootFolder();
     $formVars["folderOptions"] = FolderListOption($root_folder_pk, 0);
 
-    return $this->renderString("admin-folder-create-form.html.twig",$formVars);
+    return $this->renderString("admin-project-create-form.html.twig",$formVars);
   }
 }
 

@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 class UploadFilePage extends UploadPageBase
 {
   const FILE_INPUT_NAME = 'fileInput';
-
+  const PROJECT_INPUT_NAME = 'projectInput';
 
   public function __construct()
   {
@@ -52,6 +52,7 @@ class UploadFilePage extends UploadPageBase
   protected function handleView(Request $request, $vars)
   {
     $vars['fileInputName'] = self::FILE_INPUT_NAME;
+    $vars['projectInputName'] = self::PROJECT_INPUT_NAME;
     return $this->render("upload_file.html.twig", $this->mergeWithDefault($vars));
   }
 
