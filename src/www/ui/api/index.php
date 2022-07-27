@@ -151,6 +151,7 @@ $app->group('/uploads',
     $app->post('', UploadController::class . ':postUpload');
     $app->get('/{id:\\d+}/summary', UploadController::class . ':getUploadSummary');
     $app->get('/{id:\\d+}/licenses', UploadController::class . ':getUploadLicenses');
+    $app->get('/{id:\\d+}/copyrights', UploadController::class . ':getUploadCopyrights');
     $app->any('/{params:.*}', BadRequestController::class);
   });
 
@@ -168,12 +169,16 @@ $app->group('/groups',
   function (\Slim\Routing\RouteCollectorProxy $app) {
     $app->get('', GroupController::class . ':getGroups');
     $app->post('', GroupController::class . ':createGroup');
+    $app->delete('/{id:\\d+}', GroupController::class . ':deleteGroup');
+    $app->delete('/{id:\\d+}/user/{uid:\\d+}', GroupController::class . ':deleteGroupMember');
+    $app->any('/{params:.*}', BadRequestController::class);
   });
 
 ////////////////////////////JOBS/////////////////////
 $app->group('/jobs',
   function (\Slim\Routing\RouteCollectorProxy $app) {
     $app->get('[/{id:\\d+}]', JobController::class . ':getJobs');
+    $app->get('/all', JobController::class . ':getAllJobs');
     $app->post('', JobController::class . ':createJob');
     $app->any('/{params:.*}', BadRequestController::class);
   });
