@@ -1,4 +1,5 @@
 <?php
+
 /***********************************************************
  * Copyright (C) 2008-2013 Hewlett-Packard Development Company, L.P.
  * Copyright (C) 2014-2017 Siemens AG
@@ -37,10 +38,10 @@ class UploadFilePage extends UploadPageBase
   public function __construct()
   {
     parent::__construct(self::NAME, array(
-        self::TITLE => _("Upload a New File"),
-        self::MENU_LIST => "Upload::From File",
-        self::DEPENDENCIES => array("agent_unpack", "showjobs"),
-        self::PERMISSION => Auth::PERM_WRITE
+      self::TITLE => _("Upload a New File"),
+      self::MENU_LIST => "Upload::From File",
+      self::DEPENDENCIES => array("agent_unpack", "showjobs"),
+      self::PERMISSION => Auth::PERM_WRITE
     ));
   }
 
@@ -68,36 +69,58 @@ class UploadFilePage extends UploadPageBase
     define("UPLOAD_ERR_INVALID_FOLDER_PK", 100);
     define("UPLOAD_ERR_RESEND", 200);
     $uploadErrors = array(
-        UPLOAD_ERR_OK => _("No errors."),
-        UPLOAD_ERR_INI_SIZE => _("Larger than upload_max_filesize ") . ini_get('upload_max_filesize'),
-        UPLOAD_ERR_FORM_SIZE => _("Larger than form MAX_FILE_SIZE."),
-        UPLOAD_ERR_PARTIAL => _("Partial upload."),
-        UPLOAD_ERR_NO_FILE => _("No file selected."),
-        UPLOAD_ERR_NO_TMP_DIR => _("No temporary directory."),
-        UPLOAD_ERR_CANT_WRITE => _("Can't write to disk."),
-        UPLOAD_ERR_EXTENSION => _("File upload stopped by extension."),
-        UPLOAD_ERR_EMPTY => _("File is empty or you don't have permission to read the file."),
-        UPLOAD_ERR_INVALID_FOLDER_PK => _("Invalid Folder."),
-        UPLOAD_ERR_RESEND => _("This seems to be a resent file.")
+      UPLOAD_ERR_OK => _("No errors."),
+      UPLOAD_ERR_INI_SIZE => _("Larger than upload_max_filesize ") . ini_get('upload_max_filesize'),
+      UPLOAD_ERR_FORM_SIZE => _("Larger than form MAX_FILE_SIZE."),
+      UPLOAD_ERR_PARTIAL => _("Partial upload."),
+      UPLOAD_ERR_NO_FILE => _("No file selected."),
+      UPLOAD_ERR_NO_TMP_DIR => _("No temporary directory."),
+      UPLOAD_ERR_CANT_WRITE => _("Can't write to disk."),
+      UPLOAD_ERR_EXTENSION => _("File upload stopped by extension."),
+      UPLOAD_ERR_EMPTY => _("File is empty or you don't have permission to read the file."),
+      UPLOAD_ERR_INVALID_FOLDER_PK => _("Invalid Folder."),
+      UPLOAD_ERR_RESEND => _("This seems to be a resent file.")
     );
 
-    echo("<script>console.log('fwh');</script>");
-    echo("<script>console.log('".json_encode($request)."');</script>");
+    echo ("<script>console.log('fwh');</script>");
+    echo ("<script>console.log('" . json_encode($request) . "');</script>");
 
     $folderId = intval($request->get(self::FOLDER_PARAMETER_NAME));
-    echo("<script>console.log('folderId');</script>");
-    echo("<script>console.log('".json_encode($request->get(self::FOLDER_PARAMETER_NAME))."');</script>");
-    echo("<script>console.log('".json_encode($folderId)."');</script>");
-    
+    echo ("<script>console.log('folderId');</script>");
+    echo ("<script>console.log('" . json_encode($request->get(self::FOLDER_PARAMETER_NAME)) . "');</script>");
+    echo ("<script>console.log('" . json_encode($folderId) . "');</script>");
+    if ($request !== $result = $request->attributes->get(self::FOLDER_PARAMETER_NAME, $request)) {
+      echo ("<script>console.log('" . json_encode($result) . "');</script>");
+    }
+    $key = self::FOLDER_PARAMETER_NAME;
+    // if ($request->query->has($key)) {
+    //   // return $request->query->all()[$key];
+    //   echo ("<script>console.log('" . json_encode($request->query->all()[$key]) . "');</script>");
+    // }
+    echo ("<script>console.log('" . json_encode($request->request) . "');</script>");
+    echo ("<script>console.log('" . json_encode($request->request->all()) . "');</script>");
+    if ($request->request->has($key)) {
+      // return $request->request->all()[$key];
+      echo ("<script>console.log('" . json_encode($request->request->all()[$key]) . "');</script>");
+    }
+    // echo("<script>console.log('" . json_encode(null) . "');</script>");
+
+
+    $projectId = intval($request->get(self::PROJECT_PARAMETER_NAME));
+    echo ("<script>console.log('projectId');</script>");
+    echo ("<script>console.log('" . json_encode($request) . "');</script>");
+    echo ("<script>console.log('" . json_encode($request->get(self::PROJECT_PARAMETER_NAME)) . "');</script>");
+    echo ("<script>console.log('" . json_encode($projectId) . "');</script>");
+
     $descriptions = $request->get(self::DESCRIPTION_INPUT_NAME);
     for ($i = 0; $i < count($descriptions); $i++) {
       $descriptions[$i] = stripslashes($descriptions[$i]);
       $descriptions[$i] = $this->basicShEscaping($descriptions[$i]);
     }
     $uploadedFiles = $request->files->get(self::FILE_INPUT_NAME);
-    echo("<script>console.log('uploadedFiles');</script>");
-    echo("<script>console.log('".json_encode($request->files->get(self::FILE_INPUT_NAME))."');</script>");
-    echo("<script>console.log('".json_encode($uploadedFiles)."');</script>");
+    echo ("<script>console.log('uploadedFiles');</script>");
+    echo ("<script>console.log('" . json_encode($request->files->get(self::FILE_INPUT_NAME)) . "');</script>");
+    echo ("<script>console.log('" . json_encode($uploadedFiles) . "');</script>");
     $uploadFiles = [];
     for ($i = 0; $i < count($uploadedFiles); $i++) {
       $uploadFiles[] = [
@@ -106,10 +129,10 @@ class UploadFilePage extends UploadPageBase
       ];
     }
 
-    echo("<script>console.log('uploadFiles');</script>");
-    echo("<script>console.log('".json_encode($uploadFiles)."');</script>");
+    echo ("<script>console.log('uploadFiles');</script>");
+    echo ("<script>console.log('" . json_encode($uploadFiles) . "');</script>");
     if (empty($uploadedFiles)) {
-      echo("<script>console.log('uploadFiles is empty');</script>");
+      echo ("<script>console.log('uploadFiles is empty');</script>");
       return array(false, $uploadErrors[UPLOAD_ERR_NO_FILE], "");
     }
 
@@ -139,11 +162,11 @@ class UploadFilePage extends UploadPageBase
       return array(false, $uploadErrors[UPLOAD_ERR_INVALID_FOLDER_PK], "");
     }
 
-    echo("<script>console.log('after most check');</script>");
+    echo ("<script>console.log('after most check');</script>");
 
     $setGlobal = ($request->get('globalDecisions')) ? 1 : 0;
-    echo("<script>console.log('setGlobal');</script>");
-    echo("<script>console.log('".json_encode($setGlobal)."');</script>");
+    echo ("<script>console.log('setGlobal');</script>");
+    echo ("<script>console.log('" . json_encode($setGlobal) . "');</script>");
 
     $public = $request->get('public');
     $publicPermission = ($public == self::PUBLIC_ALL) ? Auth::PERM_READ : Auth::PERM_NONE;
@@ -157,17 +180,25 @@ class UploadFilePage extends UploadPageBase
     $success = [];
     foreach ($uploadFiles as $uploadedFile) {
 
-      echo("<script>console.log('begin job upload');</script>");
+      echo ("<script>console.log('begin job upload');</script>");
 
       $originalFileName = $uploadedFile['file']->getClientOriginalName();
       $originalFileName = $this->basicShEscaping($originalFileName);
       /* Create an upload record. */
-      $uploadId = JobAddUpload($userId, $groupId, $originalFileName,
-        $originalFileName, $uploadedFile['description'], $uploadMode,
-        $folderId, $publicPermission, $setGlobal);
+      $uploadId = JobAddUpload(
+        $userId,
+        $groupId,
+        $originalFileName,
+        $originalFileName,
+        $uploadedFile['description'],
+        $uploadMode,
+        $folderId,
+        $publicPermission,
+        $setGlobal
+      );
 
-      echo("<script>console.log('uploadId');</script>");
-      echo("<script>console.log('".json_encode($uploadId)."');</script>");
+      echo ("<script>console.log('uploadId');</script>");
+      echo ("<script>console.log('" . json_encode($uploadId) . "');</script>");
 
       if (empty($uploadId)) {
         $errors[] = _("Failed to insert upload record: ") .
@@ -189,8 +220,8 @@ class UploadFilePage extends UploadPageBase
         "orignalfile" => $originalFileName,
         "uploadid" => $uploadId
       ];
-      echo("<script>console.log('success array');</script>");
-      echo("<script>console.log('".json_encode($success)."');</script>");
+      echo ("<script>console.log('success array');</script>");
+      echo ("<script>console.log('" . json_encode($success) . "');</script>");
     }
 
     if (!empty($errors)) {
@@ -216,19 +247,24 @@ class UploadFilePage extends UploadPageBase
         }
         $errors[] = $message;
       } else {
-        $messages[] = $this->postUploadAddJobs($request, $originalFileName,
-          $uploadId);
+        $messages[] = $this->postUploadAddJobs(
+          $request,
+          $originalFileName,
+          $uploadId
+        );
       }
-      echo("<script>console.log('messages');</script>");
-      echo("<script>console.log('".json_encode($messages)."');</script>");
+      echo ("<script>console.log('messages');</script>");
+      echo ("<script>console.log('" . json_encode($messages) . "');</script>");
     }
 
     if (!empty($errors)) {
       return [false, implode(" ; ", $errors), ""];
     }
 
-    return array(true, implode("", $messages), "",
-      array_column($success, "uploadid"));
+    return array(
+      true, implode("", $messages), "",
+      array_column($success, "uploadid")
+    );
   }
 }
 

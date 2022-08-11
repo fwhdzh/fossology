@@ -2008,9 +2008,16 @@
   $Schema["TABLE"]["users"]["root_folder_fk"]["ADD"] = "ALTER TABLE \"users\" ADD COLUMN \"root_folder_fk\" int4";
   $Schema["TABLE"]["users"]["root_folder_fk"]["ALTER"] = "ALTER TABLE \"users\" ALTER COLUMN \"root_folder_fk\" SET NOT NULL";
 
+  $Schema["TABLE"]["users"]["root_project_fk"]["DESC"] = "COMMENT ON COLUMN \"users\".\"root_project_fk\" IS 'root project for this user'";
+  $Schema["TABLE"]["users"]["root_project_fk"]["ADD"] = "ALTER TABLE \"users\" ADD COLUMN \"root_project_fk\" int4";
+  
   $Schema["TABLE"]["users"]["default_folder_fk"]["DESC"] = "COMMENT ON COLUMN \"users\".\"default_folder_fk\" IS 'default folder for this user'";
   $Schema["TABLE"]["users"]["default_folder_fk"]["ADD"] = "ALTER TABLE \"users\" ADD COLUMN \"default_folder_fk\" int4 DEFAULT -1";
   $Schema["TABLE"]["users"]["default_folder_fk"]["ALTER"] = "ALTER TABLE \"users\" ALTER COLUMN \"default_folder_fk\" SET NOT NULL";
+
+  $Schema["TABLE"]["users"]["default_project_fk"]["DESC"] = "COMMENT ON COLUMN \"users\".\"default_project_fk\" IS 'default project for this user'";
+  $Schema["TABLE"]["users"]["default_project_fk"]["ADD"] = "ALTER TABLE \"users\" ADD COLUMN \"default_project_fk\" int4 DEFAULT -1";
+  $Schema["TABLE"]["users"]["default_project_fk"]["ALTER"] = "ALTER TABLE \"users\" ALTER COLUMN \"default_project_fk\" SET NOT NULL";
 
   $Schema["TABLE"]["users"]["last_connection"]["DESC"] = "";
   $Schema["TABLE"]["users"]["last_connection"]["ADD"] = "ALTER TABLE \"users\" ADD COLUMN \"last_connection\" timestamptz";

@@ -55,6 +55,13 @@ without any warranty.
             <argument type="service" id="dao.user"/>
             <argument type="service" id="dao.upload"/>
         </service>
+
+        <service id="dao.project" class="Fossology\Lib\Dao\ProjectDao" public="true">
+            <argument type="service" id="db.manager"/>
+            <argument type="service" id="dao.user"/>
+            <argument type="service" id="dao.upload"/>
+        </service>
+
         <service id="dao.package" class="Fossology\Lib\Dao\PackageDao" public="true">
             <argument type="service" id="db.manager"/>
             <argument type="service" id="logger"/>
