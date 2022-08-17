@@ -381,7 +381,12 @@ class FO_Plugin implements Plugin
    */
   function getResponse()
   {
+    echo ("<script>console.log('getResponse begin');</script>");
     ob_start();
+
+    // ob_end_flush();
+    echo ("<script>console.log('before Output');</script>");
+
     $output = $this->Output();
 
     if ($output instanceof Response) {
