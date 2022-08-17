@@ -15,12 +15,15 @@
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  ***********************************************************/
-use Fossology\Lib\Dao\FolderDao;
+use Fossology\Lib\Dao\ProjectDao;
 
 class project_create extends FO_Plugin
 {
   function __construct()
   {
+
+    echo ("<script>console.log('project_create __construct begin');</script>");
+
     $this->Name = "project_create";
     $this->Title = _("Create a new Fossology project");
     $this->MenuList = "Organize::Project::Create";
@@ -30,38 +33,41 @@ class project_create extends FO_Plugin
   }
 
   /**
-   * \brief Given a parent folder ID, a name and description,
-   * create the named folder under the parent.
+   * \brief Given a parent project ID, a name and description,
+   * create the named project under the parent.
    *
    * Includes idiot checking since the input comes from stdin.
    *
-   * @param $parentId - parent folder id
-   * @param $newFolder - new folder name
-   * @param $desc - new folder discription
+   * @param $parentId - parent project id
+   * @param $newProject - new project name
+   * @param $desc - new project discription
    *
    * @return int 1 if created, 0 if failed
    */
-  public function create($parentId, $newFolder, $desc)
+  public function create($parentId, $newProject, $desc)
   {
-    $folderName = trim($newFolder);
-    if (empty($folderName)) {
+
+    echo ("<script>console.log('create begin');</script>");
+
+    $projectName = trim($newProject);
+    if (empty($projectName)) {
       return (0);
     }
 
-    /* @var $folderDao FolderDao*/
-    $folderDao = $GLOBALS['container']->get('dao.folder');
+    /* @var $projectDao ProjectDao*/
+    $projectDao = $GLOBALS['container']->get('dao.project');
 
-    $parentExists = $folderDao->getFolder($parentId);
+    $parentExists = $projectDao->getProject($parentId);
     if (! $parentExists) {
       return (0);
     }
 
-    $folderWithSameNameUnderParent = $folderDao->getFolderId($folderName, $parentId);
-    if (! empty($folderWithSameNameUnderParent)) {
+    $projectWithSameNameUnderParent = $projectDao->getProjectId($projectName, $parentId);
+    if (! empty($projectWithSameNameUnderParent)) {
       return 4;
     }
 
-    $folderDao->createFolder($folderName, $desc, $parentId);
+    $projectDao->createProject($projectName, $desc, $parentId);
     return (1);
   }
 
@@ -70,26 +76,52 @@ class project_create extends FO_Plugin
    */
   public function Output()
   {
+
+    echo ("<script>console.log('Output begin');</script>");
+
     /* If this is a POST, then process the request. */
     $ParentId = GetParm('parentid', PARM_INTEGER);
-    $NewFolder = GetParm('newname', PARM_TEXT);
+    $NewProject = GetParm('newname', PARM_TEXT);
     $Desc = GetParm('description', PARM_TEXT);
-    if (! empty($ParentId) && ! empty($NewFolder)) {
-      $rc = $this->create($ParentId, $NewFolder, $Desc);
+
+    echo ("<script>console.log('ParentId');</script>");
+    echo ("<script>console.log('" . json_encode($ParentId) . "');</script>");
+    echo ("<script>console.log('NewProject');</script>");
+    echo ("<script>console.log('" . json_encode($NewProject) . "');</script>");
+    echo ("<script>console.log('Desc');</script>");
+    echo ("<script>console.log('" . json_encode($Desc) . "');</script>");
+
+    if (! empty($ParentId) && ! empty($NewProject)) {
+
+      echo ("<script>console.log('in if');</script>");
+
+      $rc = $this->create($ParentId, $NewProject, $Desc);
       if ($rc == 1) {
         /* Need to refresh the screen */
-        $text = _("Folder");
+        $text = _("Project");
         $text1 = _("Created");
-        $this->vars['message'] = "$text " . htmlentities($NewFolder) . " $text1";
+        $this->vars['message'] = "$text " . htmlentities($NewProject) . " $text1";
       } else if ($rc == 4) {
-        $text = _("Folder");
+        $text = _("Project");
         $text1 = _("Exists");
-        $this->vars['message'] = "$text " . htmlentities($NewFolder) . " $text1";
+        $this->vars['message'] = "$text " . htmlentities($NewProject) . " $text1";
       }
     }
 
-    $root_folder_pk = GetUserRootFolder();
-    $formVars["folderOptions"] = FolderListOption($root_folder_pk, 0);
+    echo ("<script>console.log('before GetUserRootProject');</script>");
+    $test = GetUserRootFolder();
+    echo ("<script>console.log('test');</script>");
+    echo ("<script>console.log('" . json_encode($test) . "');</script>");
+    $testCommonProject = Project2Path(1);
+    echo ("<script>console.log('testCommonProject');</script>");
+    echo ("<script>console.log('" . json_encode($testCommonProject) . "');</script>");
+
+    $root_project_pk = GetUserRootProject();
+
+    echo ("<script>console.log('root_project_pk');</script>");
+    echo ("<script>console.log('" . json_encode($root_project_pk) . "');</script>");
+
+    $formVars["projectOptions"] = ProjectListOption($root_project_pk, 0);
 
     return $this->renderString("admin-project-create-form.html.twig",$formVars);
   }

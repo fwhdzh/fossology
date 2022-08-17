@@ -60,6 +60,9 @@ function ProjectGetTop()
  */
 function GetUserRootProject()
 {
+
+  echo ("<script>console.log('GetUserRootProject begin');</script>");
+
   global $PG_CONN;
 
   /* validate inputs */
@@ -73,6 +76,10 @@ function GetUserRootProject()
   /* Get users root project */
   $sql = "select root_project_fk from users where user_pk=$user_pk";
   $result = pg_query($PG_CONN, $sql);
+
+  echo ("<script>console.log('result');</script>");
+  echo ("<script>console.log('" . json_encode($result) . "');</script>");
+
   DBCheckResult($result, $sql, __FILE__, __LINE__);
   $UsersRow = pg_fetch_assoc($result);
   $root_project_fk = $UsersRow['root_project_fk'];
@@ -100,6 +107,9 @@ function GetUserRootProject()
  */
 function Project2Path($project_pk)
 {
+
+  echo ("<script>console.log('Project2Path begin');</script>");
+
   global $PG_CONN;
   $ProjectList = array();
 
@@ -573,30 +583,30 @@ function GetProjectArray($RootProject, &$ProjectArray)
   pg_free_result($result);
 }
 
-/**
- * \brief Check if one file path contains an excluding text
- *
- * \param string $FilePath File path
- * \param string $ExcludingText Excluding text
- *
- * \return 1: include, 0: not include
- */
-function ContainExcludeString($FilePath, $ExcludingText)
-{
-  $excluding_length = 0;
-  $excluding_flag = 0; // 1: exclude 0: not exclude
-  if ($ExcludingText) {
-    $excluding_length = strlen($ExcludingText);
-  }
+// /**
+//  * \brief Check if one file path contains an excluding text
+//  *
+//  * \param string $FilePath File path
+//  * \param string $ExcludingText Excluding text
+//  *
+//  * \return 1: include, 0: not include
+//  */
+// function ContainExcludeString($FilePath, $ExcludingText)
+// {
+//   $excluding_length = 0;
+//   $excluding_flag = 0; // 1: exclude 0: not exclude
+//   if ($ExcludingText) {
+//     $excluding_length = strlen($ExcludingText);
+//   }
 
-  /* filepath contains 'xxxx/', '/xxxx/', 'xxxx', '/xxxx' */
-  if ($excluding_length > 0 && strstr($FilePath, $ExcludingText)) {
-    $excluding_flag = 1;
-    /* filepath does not contain 'xxxx/' */
-    if ('/' != $ExcludingText[0] && '/' == $ExcludingText[$excluding_length - 1] &&
-      ! strstr($FilePath, '/'.$ExcludingText)) {
-      $excluding_flag = 0;
-    }
-  }
-  return $excluding_flag;
-}
+//   /* filepath contains 'xxxx/', '/xxxx/', 'xxxx', '/xxxx' */
+//   if ($excluding_length > 0 && strstr($FilePath, $ExcludingText)) {
+//     $excluding_flag = 1;
+//     /* filepath does not contain 'xxxx/' */
+//     if ('/' != $ExcludingText[0] && '/' == $ExcludingText[$excluding_length - 1] &&
+//       ! strstr($FilePath, '/'.$ExcludingText)) {
+//       $excluding_flag = 0;
+//     }
+//   }
+//   return $excluding_flag;
+// }

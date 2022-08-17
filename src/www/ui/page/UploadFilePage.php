@@ -185,7 +185,18 @@ class UploadFilePage extends UploadPageBase
       $originalFileName = $uploadedFile['file']->getClientOriginalName();
       $originalFileName = $this->basicShEscaping($originalFileName);
       /* Create an upload record. */
-      $uploadId = JobAddUpload(
+      // $uploadId = JobAddUpload(
+      //   $userId,
+      //   $groupId,
+      //   $originalFileName,
+      //   $originalFileName,
+      //   $uploadedFile['description'],
+      //   $uploadMode,
+      //   $folderId,
+      //   $publicPermission,
+      //   $setGlobal
+      // );
+      $uploadId = JobAddUploadWithProject(
         $userId,
         $groupId,
         $originalFileName,
@@ -193,6 +204,7 @@ class UploadFilePage extends UploadPageBase
         $uploadedFile['description'],
         $uploadMode,
         $folderId,
+        $projectId,
         $publicPermission,
         $setGlobal
       );

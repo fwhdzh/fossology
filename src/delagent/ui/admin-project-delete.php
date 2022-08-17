@@ -24,7 +24,7 @@ define("TITLE_ADMIN_PROJECT_DELETE", _("Delete Project"));
 
 /**
  * @class admin_project_delete
- * @brief UI plugin to delete folders
+ * @brief UI plugin to delete projects
  */
 class admin_project_delete extends FO_Plugin
 {
@@ -42,45 +42,73 @@ class admin_project_delete extends FO_Plugin
     parent::__construct();
     $this->dbManager = $GLOBALS['container']->get('db.manager');
     $this->folderDao = $GLOBALS['container']->get('dao.folder');
+
+    $this->projectDao = $GLOBALS['container']->get('dao.project');
   }
 
   /**
-   * @brief Creates a job to detele the folder
-   * @param int $folderpk the folder_pk to remove
-   * @param int $userId   the user deleting the folder
+   * @brief Creates a job to detele the project
+   * @param int $projectpk the project_pk to remove
+   * @param int $userId   the user deleting the project
    * @return NULL on success, string on failure.
    */
-  function Delete($folderpk, $userId)
+  function Delete($projectpk, $userId)
   {
-    $splitFolder = explode(" ",$folderpk);
-    if (! $this->folderDao->isFolderAccessible($splitFolder[1], $userId)) {
+
+    echo ("<script>console.log('Delete begin');</script>");
+    // xdebug_break();
+    ob_flush();
+
+    $splitProject = explode(" ",$projectpk);
+    echo ("<script>console.log('splitProject');</script>");
+    echo ("<script>console.log('" . json_encode($splitProject) . "');</script>");
+
+    if (! $this->projectDao->isProjectAccessible($splitProject[1], $userId)) {
       $text = _("No access to delete this project");
       return ($text);
     }
-    /* Can't remove top folder */
-    if ($splitFolder[1] == FolderGetTop()) {
+    /* Can't remove top project */
+    if ($splitProject[1] == ProjectGetTop()) {
       $text = _("Can Not Delete Root Project");
       return ($text);
     }
-    /* Get the folder's name */
-    $FolderName = FolderGetName($splitFolder[1]);
+    /* Get the project's name */
+    $ProjectName = ProjectGetName($splitProject[1]);
+
+    echo ("<script>console.log('ProjectName');</script>");
+    echo ("<script>console.log('" . json_encode($ProjectName) . "');</script>");
+    ob_flush();
+
     /* Prepare the job: job "Delete" */
     $groupId = Auth::getGroupId();
-    $jobpk = JobAddJob($userId, $groupId, "Delete Folder: $FolderName");
+    $jobpk = JobAddJob($userId, $groupId, "Delete Project: $ProjectName");
     if (empty($jobpk) || ($jobpk < 0)) {
       $text = _("Failed to create job record");
       return ($text);
     }
+
+    echo ("<script>console.log('success add job');</script>");
+
     /* Add job: job "Delete" has jobqueue item "delagent" */
-    $jqargs = "DELETE FOLDER $folderpk";
+    $jqargs = "DELETE PROJECT $projectpk";
     $jobqueuepk = JobQueueAdd($jobpk, "delagent", $jqargs, NULL, NULL);
     if (empty($jobqueuepk)) {
       $text = _("Failed to place delete in job queue");
       return ($text);
     }
 
+    echo ("<script>console.log('success add jobqueue');</script>");
+    ob_flush();
+
     /* Tell the scheduler to check the queue. */
     $success  = fo_communicate_with_scheduler("database", $output, $error_msg);
+
+    echo ("<script>console.log('success');</script>");
+    echo ("<script>console.log('" . json_encode($success) . "');</script>");
+    echo ("<script>console.log('error_msg');</script>");
+    echo ("<script>console.log('" . json_encode($error_msg) . "');</script>");
+    ob_flush();
+
     if (! $success) {
       return $error_msg . "\n" . $output;
     }
@@ -94,24 +122,31 @@ class admin_project_delete extends FO_Plugin
    */
   public function Output()
   {
+    echo ("<script>console.log('Output begin');</script>");
+    ob_flush();
     /* If this is a POST, then process the request. */
-    $folder = GetParm('folder', PARM_RAW);
-    $splitFolder = explode(" ",$folder);
-    if (!empty($folder)) {
+    $project = GetParm('project', PARM_RAW);
+    $splitProject = explode(" ",$project);
+    if (!empty($project)) {
       $userId = Auth::getUserId();
-      $sql = "SELECT folder_name FROM folder join users on (users.user_pk = folder.user_fk or users.user_perm = 10) where folder_pk = $1 and users.user_pk = $2;";
-      $Folder = $this->dbManager->getSingleRow($sql,array($splitFolder[1],$userId),__METHOD__."GetRowWithFolderName");
-      if (!empty($Folder['folder_name'])) {
-        $rc = $this->Delete($folder, $userId);
+      $sql = "SELECT project_name FROM project join users on (users.user_pk = project.user_fk or users.user_perm = 10) where project_pk = $1 and users.user_pk = $2;";
+      $Project = $this->dbManager->getSingleRow($sql,array($splitProject[1],$userId),__METHOD__."GetRowWithProjectName");
+      if (!empty($Project['project_name'])) {
+        echo ("<script>console.log('project');</script>");
+        echo ("<script>console.log('" . json_encode($project) . "');</script>");
+        echo ("<script>console.log('userId');</script>");
+        echo ("<script>console.log('" . json_encode($userId) . "');</script>");
+        ob_flush();
+        $rc = $this->Delete($project, $userId);
         if (empty($rc)) {
           /* Need to refresh the screen */
-          $text = _("Deletion of folder ");
+          $text = _("Deletion of project ");
           $text1 = _(" added to job queue");
-          $this->vars['message'] = $text . $Folder['folder_name'] . $text1;
+          $this->vars['message'] = $text . $Project['project_name'] . $text1;
         } else {
           $text = _("Deletion of ");
           $text1 = _(" failed: ");
-          $this->vars['message'] =  $text . $Folder['folder_name'] . $text1 . $rc;
+          $this->vars['message'] =  $text . $Project['project_name'] . $text1 . $rc;
         }
       } else {
         $text = _("Cannot delete this project :: Permission denied");
@@ -137,10 +172,10 @@ class admin_project_delete extends FO_Plugin
     $V.= "</ul>\n";
     $text = _("Select the project to delete:  ");
     $V.= "<P>$text\n";
-    $V.= "<select name='folder' class='ui-render-select2'>\n";
+    $V.= "<select name='project' class='ui-render-select2'>\n";
     $text = _("select project");
     $V.= "<option value='' disabled selected>[$text]</option>\n";
-    $V.= FolderListOption(-1, 0, 1, -1, true);
+    $V.= ProjectListOption(-1, 0, 1, -1, true);
     $V.= "</select><P />\n";
     $text = _("Delete");
     $V.= "<input type='submit' value='$text'>\n";
