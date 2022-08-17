@@ -6,21 +6,21 @@
 <form method='post'>
     <ol>
         <li> {{ "Select the project to edit:"|trans }}
-            <select name="oldfolderid" onChange="window.location.href='{{ onchangeURI }}' + this.value" class="ui-render-select2">
-                {{ folderListOption }} FolderListOption(-1, 0, 1, $FolderSelectId);
+            <select name="oldprojectid" onChange="window.location.href='{{ onchangeURI }}' + this.value" class="ui-render-select2">
+                {{ projectListOption }} ProjectListOption(-1, 0, 1, $ProjectSelectId);
             </select>
             <P />
         </li>
         <li>
             {{ "Change project name:"|trans }}
             <br/>
-            <INPUT type="text" name="newname" size=40 value="{{ folder_name|e }}" />
+            <INPUT type="text" name="newname" size=40 value="{{ project_name|e }}" />
             <P />
         </li>
         <li>
             {{ "Change project description:"|trans }}
             <br/>
-            <INPUT type="text" name="newdesc" size="60" value="{{ folder_desc|e }}" />
+            <INPUT type="text" name="newdesc" size="60" value="{{ project_desc|e }}" />
         </li>
     </ol>
     <input type="submit" value="{{ "Edit"|trans }}">

@@ -22,7 +22,7 @@ class project_create extends FO_Plugin
   function __construct()
   {
 
-    echo ("<script>console.log('project_create __construct begin');</script>");
+    // echo ("<script>console.log('project_create __construct begin');</script>");
 
     $this->Name = "project_create";
     $this->Title = _("Create a new Fossology project");

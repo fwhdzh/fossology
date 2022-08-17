@@ -18,7 +18,7 @@
 
 use Fossology\Lib\Db\DbManager;
 
-define("TITLE_PROJECT_PROPERTIES", _("Edit Folder Properties"));
+define("TITLE_PROJECT_PROPERTIES", _("Edit Project Properties"));
 
 class project_properties extends FO_Plugin
 {
@@ -38,35 +38,35 @@ class project_properties extends FO_Plugin
   }
 
   /**
-   * \brief Given a folder's ID and a name, alter
-   * the folder properties.
+   * \brief Given a project's ID and a name, alter
+   * the project properties.
    * Includes idiot checking since the input comes from stdin.
    * \return 1 if changed, 0 if failed.
    */
-  function Edit($FolderId, $NewName, $NewDesc)
+  function Edit($ProjectId, $NewName, $NewDesc)
   {
-    $sql = 'SELECT * FROM folder where folder_pk = $1;';
-    $Row = $this->dbManager->getSingleRow($sql,array($FolderId),__METHOD__."Get");
-    /* If the folder does not exist. */
-    if ($Row['folder_pk'] != $FolderId) {
+    $sql = 'SELECT * FROM project where project_pk = $1;';
+    $Row = $this->dbManager->getSingleRow($sql,array($ProjectId),__METHOD__."Get");
+    /* If the project does not exist. */
+    if ($Row['project_pk'] != $ProjectId) {
       return (0);
     }
     $NewName = trim($NewName);
-    if (! empty($FolderId)) {
+    if (! empty($ProjectId)) {
       // Reuse the old name if no new name was given
       if (empty($NewName)) {
-        $NewName = $Row['folder_name'];
+        $NewName = $Row['project_name'];
       }
       // Reuse the old description if no new description was given
       if (empty($NewDesc)) {
-        $NewDesc = $Row['folder_desc'];
+        $NewDesc = $Row['project_desc'];
       }
     } else {
-      return (0); // $FolderId is empty
+      return (0); // $ProjectId is empty
     }
     /* Change the properties */
-    $sql = 'UPDATE folder SET folder_name = $1, folder_desc = $2 WHERE folder_pk = $3;';
-    $this->dbManager->getSingleRow($sql,array($NewName, $NewDesc, $FolderId),__METHOD__."Set");
+    $sql = 'UPDATE project SET project_name = $1, project_desc = $2 WHERE project_pk = $3;';
+    $this->dbManager->getSingleRow($sql,array($NewName, $NewDesc, $ProjectId),__METHOD__."Set");
     return (1);
   }
 
@@ -76,31 +76,31 @@ class project_properties extends FO_Plugin
   public function Output()
   {
     /* If this is a POST, then process the request. */
-    $FolderSelectId = GetParm('selectfolderid', PARM_INTEGER);
-    if (empty($FolderSelectId)) {
-      $FolderSelectId = FolderGetTop();
+    $ProjectSelectId = GetParm('selectprojectid', PARM_INTEGER);
+    if (empty($ProjectSelectId)) {
+      $ProjectSelectId = ProjectGetTop();
     }
-    $FolderId = GetParm('oldfolderid', PARM_INTEGER);
+    $ProjectId = GetParm('oldprojectid', PARM_INTEGER);
     $NewName = GetParm('newname', PARM_TEXT);
     $NewDesc = GetParm('newdesc', PARM_TEXT);
-    if (! empty($FolderId)) {
-      $FolderSelectId = $FolderId;
-      $rc = $this->Edit($FolderId, $NewName, $NewDesc);
+    if (! empty($ProjectId)) {
+      $ProjectSelectId = $ProjectId;
+      $rc = $this->Edit($ProjectId, $NewName, $NewDesc);
       if ($rc == 1) {
         /* Need to refresh the screen */
-        $text = _("Folder Properties changed");
+        $text = _("Project Properties changed");
         $this->vars["message"] = $text;
       }
     }
-    /* Get the folder info */
-    $sql = 'SELECT * FROM folder WHERE folder_pk = $1;';
-    $Folder = $this->dbManager->getSingleRow($sql,array($FolderSelectId),__METHOD__."getFolderRow");
+    /* Get the project info */
+    $sql = 'SELECT * FROM project WHERE project_pk = $1;';
+    $Project = $this->dbManager->getSingleRow($sql,array($ProjectSelectId),__METHOD__."getProjectRow");
 
     /* Display the form */
-    $formVars["onchangeURI"] = Traceback_uri() . "?mod=" . $this->Name . "&selectfolderid=";
-    $formVars["folderListOption"] = FolderListOption(-1, 0, 1, $FolderSelectId);
-    $formVars["folder_name"] = $Folder['folder_name'];
-    $formVars["folder_desc"] = $Folder['folder_desc'];
+    $formVars["onchangeURI"] = Traceback_uri() . "?mod=" . $this->Name . "&selectprojectid=";
+    $formVars["projectListOption"] = ProjectListOption(-1, 0, 1, $ProjectSelectId);
+    $formVars["project_name"] = $Project['project_name'];
+    $formVars["project_desc"] = $Project['project_desc'];
     return $this->renderString("admin-project-edit-form.html.twig",$formVars);
   }
 }
