@@ -182,6 +182,12 @@ without any warranty.
             <argument type="service" id="dao.folder"/>
         </service>
 
+        <service id="ui.project.nav" class="Fossology\Lib\UI\ProjectNav" public="true">
+            <argument type="service" id="db.manager"/>
+            <argument type="service" id="dao.folder"/>
+            <argument type="service" id="dao.project"/>
+        </service>
+
         <service id="twig.loader" class="Twig\Loader\FilesystemLoader" public="true">
             <argument id="option">%twig.loader.source_path%</argument>
         </service>
