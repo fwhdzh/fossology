@@ -322,6 +322,10 @@ class ui_browse_project extends FO_Plugin
         $this->vars['statusOptions'] = $this->uploadDao->getStatusTypeMap();
         $this->vars['project'] = $projectId;
         $this->vars['projectName'] = $this->projectDao->getProject($projectId)->getName();
+
+        echo ("<script>console.log('statusOptions');</script>");
+        echo ("<script>console.log('" . json_encode($this->vars['statusOptions']) . "');</script>");
+        ob_flush();
     }
 
 
@@ -608,6 +612,11 @@ class ui_browse_project extends FO_Plugin
      */
     function outputItemHtmlWithProject($uploadTreeId, $Project, $Upload)
     {
+
+        echo ("<script>console.log('begin outputItemHtmlWithProject');</script>");
+        echo ("<script>console.log('uploadTreeId');</script>");
+        echo ("<script>console.log('" . json_encode($uploadTreeId) . "');</script>");
+
         global $container;
         $dbManager = $container->get('db.manager');
         $show = 'quick';
@@ -652,6 +661,9 @@ class ui_browse_project extends FO_Plugin
 
         if (empty($Upload)) {
             $this->vars['show'] = $show;
+
+            echo ("<script>console.log('before ShowProject');</script>");
+
             $this->ShowProject($Project);
             // this->ShowProject($Project);
             return $html;
@@ -665,6 +677,7 @@ class ui_browse_project extends FO_Plugin
                 return $this->render('include/base.html.twig');
             }
         }
+        echo ("<script>console.log('before ShowItemWithProject');</script>");
         $html .= $this->ShowItemWithProject($Upload, $uploadTreeId, $show, $Project, $uploadtree_tablename);
         $this->vars['content'] = $html;
         return $this->render('include/base.html.twig');

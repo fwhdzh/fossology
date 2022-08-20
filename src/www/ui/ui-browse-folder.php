@@ -152,6 +152,10 @@ class ui_browse_folder extends FO_Plugin
         /* @var $uiFolderNav FolderNav */
         $uiFolderNav = $GLOBALS['container']->get('ui.folder.nav');
 
+        echo ("<script>console.log('uiFolderNav');</script>");
+        echo ("<script>console.log('" . json_encode($uiFolderNav) . "');</script>");
+        ob_flush();
+
         $folderNav = '<div id="sidetree" class="container justify-content-center" style="min-width: 234px;">';
         if ($folderId != $rootFolder->getId()) {
             $folderNav .= '<div class="treeheader" style="display:inline;"><a class="btn btn-outline-success btn-sm" href="' .
