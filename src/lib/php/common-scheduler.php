@@ -137,6 +137,10 @@ function fo_communicate_with_scheduler($input, &$output, &$error_msg)
   $sock = fo_scheduler_connect($address, $port, $error_msg);
   if ($sock) {
     $msg = trim($input);
+
+    echo ("<script>console.log('msg');</script>");
+    echo ("<script>console.log('" . json_encode($msg) . "');</script>");
+
     $write_result = fo_scheduler_write($sock, $msg);
     if ($write_result) {
       while ($buf = fo_scheduler_read($sock)) {
@@ -157,6 +161,10 @@ function fo_communicate_with_scheduler($input, &$output, &$error_msg)
           }
         } else { /* do not save the symbol string 'received' as the output, they are just symbols */
           $output .= "$buf<br>";
+
+          echo ("<script>console.log('fo_communicate_with_scheduler:output');</script>");
+          echo ("<script>console.log('" . json_encode($output) . "');</script>");
+
         }
       }
     } else {

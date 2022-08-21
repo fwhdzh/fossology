@@ -73,6 +73,8 @@ abstract class UploadPageBase extends DefaultPlugin
     // Handle request
     $this->folderDao->ensureTopLevelFolder();
 
+    $this->projectDao->ensureTopLevelProject();
+
     $message = "";
     $description = "";
     if ($request->isMethod(Request::METHOD_POST)) {
