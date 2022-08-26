@@ -1,22 +1,11 @@
 <?php
 
-/***********************************************************
- * Copyright (C) 2008-2013 Hewlett-Packard Development Company, L.P.
- * Copyright (C) 2014-2017 Siemens AG
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- ***********************************************************/
+/*
+ SPDX-FileCopyrightText: © 2008-2013 Hewlett-Packard Development Company, L.P.
+ SPDX-FileCopyrightText: © 2014-2017 Siemens AG
+
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 
 namespace Fossology\UI\Page;
 
@@ -82,35 +71,8 @@ class UploadFilePage extends UploadPageBase
       UPLOAD_ERR_RESEND => _("This seems to be a resent file.")
     );
 
-    echo ("<script>console.log('fwh');</script>");
-    echo ("<script>console.log('" . json_encode($request) . "');</script>");
-
     $folderId = intval($request->get(self::FOLDER_PARAMETER_NAME));
-    echo ("<script>console.log('folderId');</script>");
-    echo ("<script>console.log('" . json_encode($request->get(self::FOLDER_PARAMETER_NAME)) . "');</script>");
-    echo ("<script>console.log('" . json_encode($folderId) . "');</script>");
-    if ($request !== $result = $request->attributes->get(self::FOLDER_PARAMETER_NAME, $request)) {
-      echo ("<script>console.log('" . json_encode($result) . "');</script>");
-    }
-    $key = self::FOLDER_PARAMETER_NAME;
-    // if ($request->query->has($key)) {
-    //   // return $request->query->all()[$key];
-    //   echo ("<script>console.log('" . json_encode($request->query->all()[$key]) . "');</script>");
-    // }
-    echo ("<script>console.log('" . json_encode($request->request) . "');</script>");
-    echo ("<script>console.log('" . json_encode($request->request->all()) . "');</script>");
-    if ($request->request->has($key)) {
-      // return $request->request->all()[$key];
-      echo ("<script>console.log('" . json_encode($request->request->all()[$key]) . "');</script>");
-    }
-    // echo("<script>console.log('" . json_encode(null) . "');</script>");
-
-
     $projectId = intval($request->get(self::PROJECT_PARAMETER_NAME));
-    echo ("<script>console.log('projectId');</script>");
-    echo ("<script>console.log('" . json_encode($request) . "');</script>");
-    echo ("<script>console.log('" . json_encode($request->get(self::PROJECT_PARAMETER_NAME)) . "');</script>");
-    echo ("<script>console.log('" . json_encode($projectId) . "');</script>");
 
     $descriptions = $request->get(self::DESCRIPTION_INPUT_NAME);
     for ($i = 0; $i < count($descriptions); $i++) {
@@ -118,9 +80,6 @@ class UploadFilePage extends UploadPageBase
       $descriptions[$i] = $this->basicShEscaping($descriptions[$i]);
     }
     $uploadedFiles = $request->files->get(self::FILE_INPUT_NAME);
-    echo ("<script>console.log('uploadedFiles');</script>");
-    echo ("<script>console.log('" . json_encode($request->files->get(self::FILE_INPUT_NAME)) . "');</script>");
-    echo ("<script>console.log('" . json_encode($uploadedFiles) . "');</script>");
     $uploadFiles = [];
     for ($i = 0; $i < count($uploadedFiles); $i++) {
       $uploadFiles[] = [
@@ -129,10 +88,7 @@ class UploadFilePage extends UploadPageBase
       ];
     }
 
-    echo ("<script>console.log('uploadFiles');</script>");
-    echo ("<script>console.log('" . json_encode($uploadFiles) . "');</script>");
     if (empty($uploadedFiles)) {
-      echo ("<script>console.log('uploadFiles is empty');</script>");
       return array(false, $uploadErrors[UPLOAD_ERR_NO_FILE], "");
     }
 
@@ -162,11 +118,7 @@ class UploadFilePage extends UploadPageBase
       return array(false, $uploadErrors[UPLOAD_ERR_INVALID_FOLDER_PK], "");
     }
 
-    echo ("<script>console.log('after most check');</script>");
-
     $setGlobal = ($request->get('globalDecisions')) ? 1 : 0;
-    echo ("<script>console.log('setGlobal');</script>");
-    echo ("<script>console.log('" . json_encode($setGlobal) . "');</script>");
 
     $public = $request->get('public');
     $publicPermission = ($public == self::PUBLIC_ALL) ? Auth::PERM_READ : Auth::PERM_NONE;
@@ -179,23 +131,8 @@ class UploadFilePage extends UploadPageBase
     $errors = [];
     $success = [];
     foreach ($uploadFiles as $uploadedFile) {
-
-      echo ("<script>console.log('begin job upload');</script>");
-
       $originalFileName = $uploadedFile['file']->getClientOriginalName();
       $originalFileName = $this->basicShEscaping($originalFileName);
-      /* Create an upload record. */
-      // $uploadId = JobAddUpload(
-      //   $userId,
-      //   $groupId,
-      //   $originalFileName,
-      //   $originalFileName,
-      //   $uploadedFile['description'],
-      //   $uploadMode,
-      //   $folderId,
-      //   $publicPermission,
-      //   $setGlobal
-      // );
       $uploadId = JobAddUploadWithProject(
         $userId,
         $groupId,
@@ -208,9 +145,6 @@ class UploadFilePage extends UploadPageBase
         $publicPermission,
         $setGlobal
       );
-
-      echo ("<script>console.log('uploadId');</script>");
-      echo ("<script>console.log('" . json_encode($uploadId) . "');</script>");
 
       if (empty($uploadId)) {
         $errors[] = _("Failed to insert upload record: ") .
@@ -232,8 +166,6 @@ class UploadFilePage extends UploadPageBase
         "orignalfile" => $originalFileName,
         "uploadid" => $uploadId
       ];
-      echo ("<script>console.log('success array');</script>");
-      echo ("<script>console.log('" . json_encode($success) . "');</script>");
     }
 
     if (!empty($errors)) {
@@ -265,8 +197,6 @@ class UploadFilePage extends UploadPageBase
           $uploadId
         );
       }
-      echo ("<script>console.log('messages');</script>");
-      echo ("<script>console.log('" . json_encode($messages) . "');</script>");
     }
 
     if (!empty($errors)) {
