@@ -26,22 +26,13 @@ class ProjectNav
 {
   /** @var DbManager */
   private $dbManager;
-  /** @var FolderDao */
-  private $folderDao;
 
   /** @var ProjectDao */
   private $projectDao;
 
-  // public function __construct(DbManager $dbManager, FolderDao $folderDao)
-  // {
-  //   $this->dbManager = $dbManager;
-  //   $this->folderDao = $folderDao;
-  // }
-
-  public function __construct(DbManager $dbManager, FolderDao $folderDao, ProjectDao $projectDao)
+  public function __construct(DbManager $dbManager, ProjectDao $projectDao)
   {
     $this->dbManager = $dbManager;
-    $this->folderDao = $folderDao;
     $this->projectDao = $projectDao;
   }
 

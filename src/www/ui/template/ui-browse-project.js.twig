@@ -26,18 +26,12 @@ var browseTable;
 dataTableConfig =
     {
       "bServerSide": true,
-      //"sAjaxSource": "?mod=browse-processPost",
       "sAjaxSource": "?mod=browseProject-processPost",
       "fnServerData": function (sSource, aoData, fnCallback) {
           aoData.push({"name": "project", "value": project});
           aoData.push({"name": "show", "value": "{{ show }}"});
         aoData.push({"name": "assigneeSelected", "value": assigneeSelected});
         aoData.push({"name": "statusSelected", "value": statusSelected});
-
-        aoData.push({"name": "folder", "value": 1})
-        console.log('aoData');
-        console.log(aoData);
-
         $.getJSON(sSource, aoData, fnCallback).fail(failed);
       },
       "sPaginationType": "listbox",

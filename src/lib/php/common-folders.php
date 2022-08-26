@@ -60,9 +60,6 @@ function FolderGetTop()
  */
 function GetUserRootFolder()
 {
-
-  echo ("<script>console.log('GetUserRootFolder begin');</script>");
-
   global $PG_CONN;
 
   /* validate inputs */
