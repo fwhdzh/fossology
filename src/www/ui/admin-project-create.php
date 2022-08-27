@@ -21,9 +21,6 @@ class project_create extends FO_Plugin
 {
   function __construct()
   {
-
-    // echo ("<script>console.log('project_create __construct begin');</script>");
-
     $this->Name = "project_create";
     $this->Title = _("Create a new Fossology project");
     $this->MenuList = "Organize::Project::Create";
@@ -46,9 +43,6 @@ class project_create extends FO_Plugin
    */
   public function create($parentId, $newProject, $desc)
   {
-
-    echo ("<script>console.log('create begin');</script>");
-
     $projectName = trim($newProject);
     if (empty($projectName)) {
       return (0);
@@ -76,25 +70,12 @@ class project_create extends FO_Plugin
    */
   public function Output()
   {
-
-    echo ("<script>console.log('Output begin');</script>");
-
     /* If this is a POST, then process the request. */
     $ParentId = GetParm('parentid', PARM_INTEGER);
     $NewProject = GetParm('newname', PARM_TEXT);
     $Desc = GetParm('description', PARM_TEXT);
 
-    echo ("<script>console.log('ParentId');</script>");
-    echo ("<script>console.log('" . json_encode($ParentId) . "');</script>");
-    echo ("<script>console.log('NewProject');</script>");
-    echo ("<script>console.log('" . json_encode($NewProject) . "');</script>");
-    echo ("<script>console.log('Desc');</script>");
-    echo ("<script>console.log('" . json_encode($Desc) . "');</script>");
-
     if (! empty($ParentId) && ! empty($NewProject)) {
-
-      echo ("<script>console.log('in if');</script>");
-
       $rc = $this->create($ParentId, $NewProject, $Desc);
       if ($rc == 1) {
         /* Need to refresh the screen */
@@ -108,19 +89,7 @@ class project_create extends FO_Plugin
       }
     }
 
-    echo ("<script>console.log('before GetUserRootProject');</script>");
-    $test = GetUserRootFolder();
-    echo ("<script>console.log('test');</script>");
-    echo ("<script>console.log('" . json_encode($test) . "');</script>");
-    $testCommonProject = Project2Path(1);
-    echo ("<script>console.log('testCommonProject');</script>");
-    echo ("<script>console.log('" . json_encode($testCommonProject) . "');</script>");
-
     $root_project_pk = GetUserRootProject();
-
-    echo ("<script>console.log('root_project_pk');</script>");
-    echo ("<script>console.log('" . json_encode($root_project_pk) . "');</script>");
-
     $formVars["projectOptions"] = ProjectListOption($root_project_pk, 0);
 
     return $this->renderString("admin-project-create-form.html.twig",$formVars);

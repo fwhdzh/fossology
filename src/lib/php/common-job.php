@@ -251,10 +251,7 @@ function JobQueueAdd($job_pk, $jq_type, $jq_args, $jq_runonpfile, $Depends, $hos
   $sql .= $jq_cmd_args ? "'$jq_cmd_args')" : "NULL)";
 
   $result = pg_query($PG_CONN, $sql);
-
-  echo ("<script>console.log('pg_query result');</script>");
-  echo ("<script>console.log('" . json_encode($result) . "');</script>");
-
+  
   DBCheckResult($result, $sql, __FILE__, __LINE__);
   pg_free_result($result);
 

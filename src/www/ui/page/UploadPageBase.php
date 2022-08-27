@@ -105,17 +105,13 @@ abstract class UploadPageBase extends DefaultPlugin
     $folderStructure = $this->folderDao->getFolderStructure($rootFolder->getId());
     $vars['folderStructure'] = $folderStructure;
 
-    echo ("<script>console.log('folderStructure');</script>");
-    echo ("<script>console.log('" . json_encode($folderStructure) . "');</script>");
-
     $rootProject = $this->projectDao->getDefaultProject(Auth::getUserId());
     if ($rootProject == NULL) {
       $rootProject = $this->projectDao->getRootProject(Auth::getUserId());
     }
     $projectStructure = $this->projectDao->getProjectStructure($rootProject->getId());
     $vars['projectStructure'] = $projectStructure;
-    echo ("<script>console.log('projectStructure');</script>");
-    echo ("<script>console.log('" . json_encode($projectStructure) . "');</script>");
+
     $vars['projectStructure'] = $projectStructure;
 
 
@@ -143,8 +139,7 @@ abstract class UploadPageBase extends DefaultPlugin
       $skip = array("agent_unpack", "agent_adj2nest", "wget_agent");
       $vars['agentCheckBoxMake'] = AgentCheckBoxMake(-1, $skip);
     }
-    // echo ("<script>console.log('vars');</script>");
-    // echo ("<script>console.log('" . json_encode($vars) . "');</script>");
+
     return $this->handleView($request, $vars);
   }
 
@@ -153,17 +148,9 @@ abstract class UploadPageBase extends DefaultPlugin
     $userId = Auth::getUserId();
     $groupId = Auth::getGroupId();
 
-    echo ("<script>console.log('fileName');</script>");
-    echo ("<script>console.log('" . json_encode($fileName) . "');</script>");
-    echo ("<script>console.log('uploadId');</script>");
-    echo ("<script>console.log('" . json_encode($uploadId) . "');</script>");
-
     if ($jobId === null) {
       $jobId = JobAddJob($userId, $groupId, $fileName, $uploadId);
     }
-
-    echo ("<script>console.log('jobId');</script>");
-    echo ("<script>console.log('" . json_encode($jobId) . "');</script>");
 
     $dummy = "";
     $unpackArgs = intval($request->get('scm')) == 1 ? '-I' : '';

@@ -61,8 +61,6 @@ function ProjectGetTop()
 function GetUserRootProject()
 {
 
-  echo ("<script>console.log('GetUserRootProject begin');</script>");
-
   global $PG_CONN;
 
   /* validate inputs */
@@ -76,9 +74,6 @@ function GetUserRootProject()
   /* Get users root project */
   $sql = "select root_project_fk from users where user_pk=$user_pk";
   $result = pg_query($PG_CONN, $sql);
-
-  echo ("<script>console.log('result');</script>");
-  echo ("<script>console.log('" . json_encode($result) . "');</script>");
 
   DBCheckResult($result, $sql, __FILE__, __LINE__);
   $UsersRow = pg_fetch_assoc($result);
@@ -107,8 +102,6 @@ function GetUserRootProject()
  */
 function Project2Path($project_pk)
 {
-
-  echo ("<script>console.log('Project2Path begin');</script>");
 
   global $PG_CONN;
   $ProjectList = array();

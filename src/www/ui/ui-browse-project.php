@@ -255,10 +255,6 @@ class ui_browse_project extends FO_Plugin
         /* @var $uiFolderNav FolderNav */
         $uiFolderNav = $GLOBALS['container']->get('ui.folder.nav');
         // $uiFolderNav = $GLOBALS['container']->get('ui.project.nav');
-        echo ("<script>console.log('uiFolderNav');</script>");
-        echo ("<script>console.log('" . json_encode($uiFolderNav) . "');</script>");
-        ob_flush();
-
         $folderNav = '<div id="sidetree" class="container justify-content-center" style="min-width: 234px;">';
         if ($folderId != $rootFolder->getId()) {
             $folderNav .= '<div class="treeheader" style="display:inline;"><a class="btn btn-outline-success btn-sm" href="' .
@@ -296,10 +292,6 @@ class ui_browse_project extends FO_Plugin
         /* @var $uiProjectNav ProjectNav */
         // $uiProjectNav = $GLOBALS['container']->get('ui.project.nav');
         $uiProjectNav = $GLOBALS['container']->get('ui.project.nav');
-        echo ("<script>console.log('uiProjectNav');</script>");
-        echo ("<script>console.log('" . json_encode($uiProjectNav) . "');</script>");
-        ob_flush();
-
         $projectNav = '<div id="sidetree" class="container justify-content-center" style="min-width: 234px;">';
         if ($projectId != $rootProject->getId()) {
             $projectNav .= '<div class="treeheader" style="display:inline;"><a class="btn btn-outline-success btn-sm" href="' .
@@ -322,72 +314,7 @@ class ui_browse_project extends FO_Plugin
         $this->vars['statusOptions'] = $this->uploadDao->getStatusTypeMap();
         $this->vars['project'] = $projectId;
         $this->vars['projectName'] = $this->projectDao->getProject($projectId)->getName();
-
-        echo ("<script>console.log('statusOptions');</script>");
-        echo ("<script>console.log('" . json_encode($this->vars['statusOptions']) . "');</script>");
-        ob_flush();
     }
-
-
-    // function Output()
-    // {
-    //     if ($this->State != PLUGIN_STATE_READY) {
-    //         return 0;
-    //     }
-
-    //     $this->folderDao->ensureTopLevelFolder();
-
-    //     $folder_pk = GetParm("folder", PARM_INTEGER);
-    //     $Upload = GetParm("upload", PARM_INTEGER);  // upload_pk to browse
-    //     $Item = GetParm("item", PARM_INTEGER);  // uploadtree_pk to browse
-
-    //     echo ("<script>console.log('folder_pk');</script>");
-    //     echo ("<script>console.log('" . json_encode($folder_pk) . "');</script>");
-    //     echo ("<script>console.log('Upload');</script>");
-    //     echo ("<script>console.log('" . json_encode($Upload) . "');</script>");
-    //     echo ("<script>console.log('Item');</script>");
-    //     echo ("<script>console.log('" . json_encode($Item) . "');</script>");
-        
-
-    //     /* check if $folder_pk is accessible to logged in user */
-    //     if (!empty($folder_pk) && !$this->folderDao->isFolderAccessible($folder_pk)) {
-    //         $this->vars['message'] = _("Permission Denied");
-    //         return $this->render('include/base.html.twig');
-    //     }
-
-    //     /* check permission if $Upload is given */
-    //     if (!empty($Upload) && !$this->uploadDao->isAccessible($Upload, Auth::getGroupId())) {
-    //         $this->vars['message'] = _("Permission Denied");
-    //         return $this->render('include/base.html.twig');
-    //     }
-
-    //     if (empty($folder_pk)) {
-    //         try {
-    //             $folder_pk = $this->getFolderId($Upload);
-    //         } catch (Exception $exc) {
-    //             return $exc->getMessage();
-    //         }
-    //     }
-
-    //     $output = $this->outputItemHtml($Item, $folder_pk, $Upload);
-    //     if ($output instanceof Response) {
-    //         return $output;
-    //     }
-
-    //     $this->vars['content'] = $output;
-    //     $modsUploadMulti = MenuHook::getAgentPluginNames('UploadMulti');
-    //     if (!empty($modsUploadMulti)) {
-    //         $multiUploadAgents = array();
-    //         foreach ($modsUploadMulti as $mod) {
-    //             $multiUploadAgents[$mod] = $GLOBALS['Plugins'][$mod]->title;
-    //         }
-    //         $this->vars['multiUploadAgents'] = $multiUploadAgents;
-    //     }
-    //     $this->vars['folderId'] = $folder_pk;
-
-    //     return $this->render('ui-browse.html.twig');
-    // }
-
 
     function Output()
     {
@@ -400,14 +327,6 @@ class ui_browse_project extends FO_Plugin
         $project_pk = GetParm("project", PARM_INTEGER);
         $Upload = GetParm("upload", PARM_INTEGER);  // upload_pk to browse
         $Item = GetParm("item", PARM_INTEGER);  // uploadtree_pk to browse
-
-        echo ("<script>console.log('project_pk');</script>");
-        echo ("<script>console.log('" . json_encode($project_pk) . "');</script>");
-        echo ("<script>console.log('Upload');</script>");
-        echo ("<script>console.log('" . json_encode($Upload) . "');</script>");
-        echo ("<script>console.log('Item');</script>");
-        echo ("<script>console.log('" . json_encode($Item) . "');</script>");
-        
 
         /* check if $project_pk is accessible to logged in user */
         if (!empty($project_pk) && !$this->projectDao->isProjectAccessible($project_pk)) {
@@ -428,8 +347,6 @@ class ui_browse_project extends FO_Plugin
                 return $exc->getMessage();
             }
         }
-        echo ("<script>console.log('project_pk');</script>");
-        echo ("<script>console.log('" . json_encode($project_pk) . "');</script>");
 
         $output = $this->outputItemHtmlWithProject($Item, $project_pk, $Upload);
         if ($output instanceof Response) {
@@ -511,9 +428,6 @@ class ui_browse_project extends FO_Plugin
 
         $projectTreeCte = $this->projectDao->getProjectTreeCte($rootProject);
 
-        echo ("<script>console.log('projectTreeCte');</script>");
-        echo ("<script>console.log('" . json_encode($projectTreeCte) . "');</script>");
-
         $parent = $dbManager->getSingleRow(
             $projectTreeCte .
                 " SELECT ft.project_pk FROM projectcontents fc LEFT JOIN project_tree ft ON fc.parent_fk=ft.project_pk "
@@ -524,12 +438,6 @@ class ui_browse_project extends FO_Plugin
         if (!$parent) {
             throw new Exception("Upload $uploadId missing from projectcontents in your projecttree.");
         }
-
-        echo ("<script>console.log('parent');</script>");
-        echo ("<script>console.log('" . json_encode($parent) . "');</script>");
-        echo ("<script>console.log('parent[project_pk]');</script>");
-        echo ("<script>console.log('" . json_encode($parent['project_pk']) . "');</script>");
-        ob_flush();
 
         return $parent['project_pk'];
     }
@@ -613,10 +521,6 @@ class ui_browse_project extends FO_Plugin
     function outputItemHtmlWithProject($uploadTreeId, $Project, $Upload)
     {
 
-        echo ("<script>console.log('begin outputItemHtmlWithProject');</script>");
-        echo ("<script>console.log('uploadTreeId');</script>");
-        echo ("<script>console.log('" . json_encode($uploadTreeId) . "');</script>");
-
         global $container;
         $dbManager = $container->get('db.manager');
         $show = 'quick';
@@ -661,9 +565,6 @@ class ui_browse_project extends FO_Plugin
 
         if (empty($Upload)) {
             $this->vars['show'] = $show;
-
-            echo ("<script>console.log('before ShowProject');</script>");
-
             $this->ShowProject($Project);
             // this->ShowProject($Project);
             return $html;
@@ -677,7 +578,6 @@ class ui_browse_project extends FO_Plugin
                 return $this->render('include/base.html.twig');
             }
         }
-        echo ("<script>console.log('before ShowItemWithProject');</script>");
         $html .= $this->ShowItemWithProject($Upload, $uploadTreeId, $show, $Project, $uploadtree_tablename);
         $this->vars['content'] = $html;
         return $this->render('include/base.html.twig');

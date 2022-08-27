@@ -151,11 +151,6 @@ class ui_browse_folder extends FO_Plugin
         }
         /* @var $uiFolderNav FolderNav */
         $uiFolderNav = $GLOBALS['container']->get('ui.folder.nav');
-
-        echo ("<script>console.log('uiFolderNav');</script>");
-        echo ("<script>console.log('" . json_encode($uiFolderNav) . "');</script>");
-        ob_flush();
-
         $folderNav = '<div id="sidetree" class="container justify-content-center" style="min-width: 234px;">';
         if ($folderId != $rootFolder->getId()) {
             $folderNav .= '<div class="treeheader" style="display:inline;"><a class="btn btn-outline-success btn-sm" href="' .
@@ -192,14 +187,6 @@ class ui_browse_folder extends FO_Plugin
         $folder_pk = GetParm("folder", PARM_INTEGER);
         $Upload = GetParm("upload", PARM_INTEGER);  // upload_pk to browse
         $Item = GetParm("item", PARM_INTEGER);  // uploadtree_pk to browse
-
-        echo ("<script>console.log('folder_pk');</script>");
-        echo ("<script>console.log('" . json_encode($folder_pk) . "');</script>");
-        echo ("<script>console.log('Upload');</script>");
-        echo ("<script>console.log('" . json_encode($Upload) . "');</script>");
-        echo ("<script>console.log('Item');</script>");
-        echo ("<script>console.log('" . json_encode($Item) . "');</script>");
-        ob_flush();
 
         /* check if $folder_pk is accessible to logged in user */
         if (!empty($folder_pk) && !$this->folderDao->isFolderAccessible($folder_pk)) {
