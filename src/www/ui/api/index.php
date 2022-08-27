@@ -1,21 +1,10 @@
 <?php
-/***************************************************************
- Copyright (C) 2017-2018,2021 Siemens AG
- Copyright (C) 2021 Orange by Piotr Pszczola <piotr.pszczola@orange.com>
+/*
+ SPDX-FileCopyrightText: © 2017-2018,2021 Siemens AG
+ SPDX-FileCopyrightText: © 2021 Orange by Piotr Pszczola <piotr.pszczola@orange.com>
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- ***************************************************************/
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 /**
  * @dir
  * @brief REST api for FOSSology
@@ -159,8 +148,12 @@ $app->group('/uploads',
 $app->group('/users',
   function (\Slim\Routing\RouteCollectorProxy $app) {
     $app->get('[/{id:\\d+}]', UserController::class . ':getUsers');
+    $app->put('[/{id:\\d+}]', UserController::class . ':updateUser');
+    $app->post('', UserController::class . ':addUser');
     $app->delete('/{id:\\d+}', UserController::class . ':deleteUser');
     $app->get('/self', UserController::class . ':getCurrentUser');
+    $app->post('/tokens', UserController::class . ':createRestApiToken');
+    $app->get('/tokens/{type:\\w+}', UserController::class . ':getTokens');
     $app->any('/{params:.*}', BadRequestController::class);
   });
 
@@ -171,6 +164,7 @@ $app->group('/groups',
     $app->post('', GroupController::class . ':createGroup');
     $app->delete('/{id:\\d+}', GroupController::class . ':deleteGroup');
     $app->delete('/{id:\\d+}/user/{uid:\\d+}', GroupController::class . ':deleteGroupMember');
+    $app->get('/deletable', GroupController::class . ':getDeletableGroups');
     $app->any('/{params:.*}', BadRequestController::class);
   });
 

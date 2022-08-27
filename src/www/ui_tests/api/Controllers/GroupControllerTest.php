@@ -1,20 +1,9 @@
 <?php
-/***************************************************************
- * Copyright (C) 2022 Samuel Dushimimana <dushsam100@gmail.com>
+/*
+ SPDX-FileCopyrightText: © 2022 Samuel Dushimimana <dushsam100@gmail.com>
 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- ***************************************************************/
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 /**
  * @file
  * @brief Tests for GroupController
@@ -148,5 +137,23 @@ class GroupControllerTest extends \PHPUnit\Framework\TestCase
       $this->getResponseJson($actualResponse));
   }
 
-
+  /**
+   * @test
+   * -# Test GroupController::getDeletableGroups()
+   * -# Check if the response is a list of groups.
+   */
+  public function testGetDeletableGroups()
+  {
+    $userId = 2;
+    $groupList = array();
+    $this->restHelper->shouldReceive('getUserId')->andReturn($userId);
+    $_SESSION[Auth::USER_LEVEL] = Auth::PERM_WRITE;
+    $this->userDao->shouldReceive('getDeletableAdminGroupMap')->withArgs([$userId,
+      $_SESSION[Auth::USER_LEVEL]])->andReturn([]);
+    $expectedResponse = (new ResponseHelper())->withJson($groupList, 200);
+    $actualResponse = $this->groupController->getDeletableGroups(null, new ResponseHelper(), []);
+    $this->assertEquals($expectedResponse->getStatusCode(), $actualResponse->getStatusCode());
+    $this->assertEquals($this->getResponseJson($expectedResponse), $this->getResponseJson($actualResponse));
+  }
+  
 }

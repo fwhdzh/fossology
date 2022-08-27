@@ -1,15 +1,7 @@
-# Copyright (C) Siemens AG 2017-2022
-# Copyright (C) 2021 Orange by Piotr Pszczola <piotr.pszczola@orange.com>
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# version 2 as published by the Free Software Foundation.
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# SPDX-FileCopyrightText: © 2017-2022 Siemens AG
+# SPDX-FileCopyrightText: © 2021 Orange by Piotr Pszczola <piotr.pszczola@orange.com>
+
+# SPDX-License-Identifier: GPL-2.0-only
 
 openapi: 3.0.2
 info:
@@ -70,12 +62,22 @@ paths:
         description: Required details for generating new token
         required: true
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TokenRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenRequest'
+              allOf:
+                - $ref: '#/components/schemas/TokenRequest'
+                - type: object
+                  properties:
+                    username:
+                      type: string
+                      description: Username of the login user.
+                    password:
+                      type: string
+                      format: password
+                      description: Password of the user trying to login.
+                  required:
+                    - username
+                    - password
       responses:
         '201':
           description: Token generated
@@ -611,7 +613,7 @@ paths:
                 $ref: '#/components/schemas/Info'
         default:
           $ref: '#/components/responses/defaultResponse'
-          
+
   /uploads/{id}/copyrights:
     parameters:
       - name: id
@@ -762,6 +764,70 @@ paths:
         default:
           $ref: '#/components/responses/defaultResponse'
   /users:
+    post:
+        operationId: createUser
+        tags:
+        - User
+        - Admin
+        summary: Create a new user
+        description: >
+          Create a new user
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    properties:
+                      user_pass:
+                        type: string
+                      defaultVisibility:
+                        type: string
+                        enum:
+                          - public
+                          - protected
+                          - private
+                    required:
+                      - name
+            application/x-www-form-urlencoded:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    properties:
+                      user_pass:
+                        type: string
+                      defaultVisibility:
+                        type: string
+                        enum:
+                          - public
+                          - protected
+                          - private
+                    required:
+                      - name
+        responses:
+          '201':
+            description: User created successfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Info'
+          '409':
+            description: User with the same email or username already exists
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Info'
+          '500':
+            description: Internal server error with details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Info'
+          default:
+              $ref: '#/components/responses/defaultResponse'
     get:
       operationId: getUsers
       tags:
@@ -803,6 +869,77 @@ paths:
                 $ref: '#/components/schemas/User'
         default:
             $ref: '#/components/responses/defaultResponse'
+    put:
+      operationId: modifyUserById
+      tags:
+        - User
+        - Admin
+      summary: Edit user details by id
+      description: >
+        Edit user details by id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/User'
+                - type: object
+                  properties:
+                    user_pass:
+                      type: string
+                    defaultFolderId:
+                      type: integer
+                    defaultVisibility:
+                      type: string
+                      enum:
+                        - public
+                        - protected
+                        - private
+          application/x-www-form-urlencoded:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/User'
+                - type: object
+                  properties:
+                    user_pass:
+                      type: string
+                    defaultFolderId:
+                      type: integer
+                    defaultVisibility:
+                      type: string
+                      enum:
+                        - public
+                        - protected
+                        - private
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+        '400':
+          description: Missing or wrong parameters in request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+        '403':
+          description: The session owner is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+        '404':
+          description: UserId doesn't exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+        
+        default:
+            $ref: '#/components/responses/defaultResponse'
     delete:
       operationId: deleteUserById
       tags:
@@ -832,17 +969,85 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/User'
-                  - type: object
-                    properties:
-                      default_group:
-                        type: string
-                        description: Default group of the user
-                        example:
-                          "fossy"        
+                $ref: '#/components/schemas/User'      
         default:
           $ref: '#/components/responses/defaultResponse'
+  /users/tokens:
+    post:
+      operationId: createRestApiToken
+      tags:
+        - User
+        - Admin
+      summary: Create a new REST API Token
+      description: >
+        Create a new REST API Token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '201':
+          description: Token created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Info'
+                  - type: object
+                    properties:
+                      token:
+                        type: string
+                        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTgwODI1OTksIm5iZiI6MTY1NzkwOTgwMCwianRpIjoiTXk0eiIsInNjb3BlIjoid3JpdGUifQ.Sl1acvN0GlCe7VUZJQX00u_vpfWrtfJlVYQ63FBkzP4
+        '400':
+          description: Following parameters are required in the request body -- token_name,token_scope,token_expire
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+        
+        default:
+            $ref: '#/components/responses/defaultResponse'
+  /users/tokens/{type}:
+    parameters:
+      - name: type
+        required: true
+        in: path
+        schema:
+          type: string
+          enum:
+          - active
+          - expired
+    get:
+      operationId: getTokensByType
+      tags:
+        - User
+        - Admin
+      summary: Get all the REST API tokens (active | expired)
+      description: >
+        Get all the REST API tokens (active | expired)
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Info'
+                  - type: object
+                    properties:
+                      active_tokens:
+                        $ref: '#/components/schemas/Token'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+        
+        default:
+            $ref: '#/components/responses/defaultResponse'
   /jobs:
     parameters:
       - name: groupName
@@ -1306,7 +1511,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/Info'
         default:
-          $ref: '#/components/responses/defaultResponse' 
+          $ref: '#/components/responses/defaultResponse'
+  /groups/deletable:
+    get:
+      operationId: deletableGroups
+      tags:
+        - Groups
+      summary: Give a list of deletable groups
+      description: >
+        Return a list of the groups which it is possible to delete.
+      responses:
+        '200':
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        default:
+          $ref: '#/components/responses/defaultResponse'
   /report:
     get:
       operationId: getReportsByUpload
@@ -1828,6 +2052,35 @@ components:
             - INFO
             - ERROR
           description: Denotes if info was created on error
+    Token:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Token Id
+        token_name:
+          type: string
+          description: Name of the Token
+        created:
+          type: string
+          format: date
+          description: Denotes when the token was created
+          example: 2022-07-11
+        token_expire:
+          type: string
+          format: date
+          description: Denotes when the token was created
+          example: 2022-07-11
+        scope:
+          type: string
+          enum:
+          - read
+          - write
+          description: Scope of the token
+        token:
+          type: string
+          description: Scope of the token
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTg5NDY1OTksIm5iZiI6MTY1NzkwOTgwMCwianRpIjoiTnk0eiIsInNjb3BlIjoid3JpdGUifQ.Yqwdt7Fzx-Qw3megYix_OYu1mqBOoz4Rrc1cgJasmJA
     User:
       type: object
       properties:
@@ -1849,6 +2102,7 @@ components:
             - none
             - read_only
             - read_write
+            - clearing_admin
             - admin
         rootFolderId:
           type: number
@@ -1857,12 +2111,17 @@ components:
         emailNotification:
           type: boolean
           description: enable email notification when upload scan completes
+        defaultGroup:
+          type: integer
+          description: Default group id of the user
         agents:
           $ref: '#/components/schemas/Analysis'
+        defaultBucketpool:
+          description: Default bucket pool id
+          type: integer
+          nullable: true
       required:
         - id
-        - name
-        - description
     Analysis:
       type: object
       properties:
@@ -1896,6 +2155,9 @@ components:
         reso:
           type: boolean
           description: Should REUSE.Software Analysis be run on this upload.
+        heritage:
+          type: boolean
+          description: Should Software Heritage Analysis be run on this upload.
     Reuser:
       type: object
       properties:
@@ -1953,13 +2215,6 @@ components:
     TokenRequest:
       type: object
       properties:
-        username:
-          type: string
-          description: Username of the login user.
-        password:
-          type: string
-          format: password
-          description: Password of the user trying to login.
         token_name:
           type: string
           maxLength: 40

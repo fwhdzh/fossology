@@ -1,21 +1,10 @@
 <?php
-/***********************************************************
- * Copyright (C) 2008-2011 Hewlett-Packard Development Company, L.P.
- * Copyright (C) 2014-2015 Siemens AG
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- ***********************************************************/
+/*
+ SPDX-FileCopyrightText: © 2008-2011 Hewlett-Packard Development Company, L.P.
+ SPDX-FileCopyrightText: © 2014-2015 Siemens AG
+
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 
 namespace Fossology\Lib\UI\Component;
 
@@ -25,6 +14,11 @@ use Twig\Environment;
 class Menu
 {
   const FULL_MENU_DEBUG = 'fullmenudebug';
+  /**
+   * @var string
+   * Name of cookie to handle banner close state.
+   */
+  const BANNER_COOKIE = 'close_banner';
   var $MenuTarget = "treenav";
   protected $renderer;
 
@@ -233,9 +227,16 @@ class Menu
     global $SysConf;
     $sysConfig = $SysConf['SYSCONFIG'];
 
+    $hide_banner = (array_key_exists(self::BANNER_COOKIE, $_COOKIE)
+                    && $_COOKIE[self::BANNER_COOKIE] == 1);
+
     $vars = array();
     $vars['title'] = empty($title) ? _("Welcome to FOSSology") : $title;
-    $vars['bannerMsg'] = @$sysConfig['BannerMsg'];
+    if ($hide_banner) {
+      $vars['bannerMsg'] = "";
+    } else {
+      $vars['bannerMsg'] = @$sysConfig['BannerMsg'];
+    }
     $vars['logoLink'] =  $sysConfig['LogoLink']?: 'http://fossology.org';
     $vars['logoImg'] =  $sysConfig['LogoImage']?: 'images/fossology-logo.gif';
 

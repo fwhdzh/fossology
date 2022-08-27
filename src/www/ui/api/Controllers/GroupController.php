@@ -1,23 +1,11 @@
 <?php
-/***************************************************************
- Copyright (C) 2021 Orange
- Copyright (C) 2022 Samuel Dushimimana <dushsam100@gmail.com>
- Authors: Piotr Pszczola <piotr.pszczola@orange.com>
+/*
+ SPDX-FileCopyrightText: © 2021 Orange
+ SPDX-FileCopyrightText: © 2022 Samuel Dushimimana <dushsam100@gmail.com>
+ Author: Piotr Pszczola <piotr.pszczola@orange.com>
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- ***************************************************************/
-
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 /**
  * @file
  * @brief Controller for user queries
@@ -176,5 +164,29 @@ class GroupController extends RestController
     }
 
     return $response->withJson($returnVal->getArray(), $returnVal->getCode());
+  }
+
+  /**
+   * Get a list of groups that can be deleted
+   *
+   * @param ServerRequestInterface $request
+   * @param ResponseHelper $response
+   * @param array $args
+   * @return ResponseHelper
+   */
+  public function getDeletableGroups($request, $response, $args)
+  {
+    $userId = $this->restHelper->getUserId();
+    /* @var $userDao UserDao */
+    $userDao = $this->restHelper->getUserDao();
+    $groupMap = $userDao->getDeletableAdminGroupMap($userId,
+      $_SESSION[Auth::USER_LEVEL]);
+
+    $groupList = array();
+    foreach ($groupMap as $key => $value) {
+      $groupObject = new Group($key, $value);
+      $groupList[] = $groupObject->getArray();
+    }
+    return $response->withJson($groupList, 200);
   }
 }

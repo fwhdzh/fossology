@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: © Fossology contributors
+
+# SPDX-License-Identifier: FSFAP
 /.idea
 /.vscode
 *iml
@@ -12,6 +15,7 @@ cov.txt
 *Tests-Listing.xml
 *Tests-Results.xml
 VERSION
+VERSIONSTRING
 /.project
 /.cproject
 .settings
@@ -24,8 +28,10 @@ VERSION
 tags
 php.ini
 .cache
+.phan
 
 # compiled or derived files
+compile_commands.json
 install/db/dbcreate
 install/defconf/Db.conf
 install/defconf/fossology.conf
@@ -135,6 +141,7 @@ src/ununpack/agent/departition-sa
 src/ununpack/agent/ununpack-sa
 src/ununpack/agent_tests/Unit/testconf
 src/wget_agent/agent/wget_agent
+src/wget_agent/agent_tests/test_result
 variable.list
 /nbproject/private/
 /src/monk/VERSION-monk
@@ -148,7 +155,6 @@ variable.list
 /src/readmeoss/agent/version.php
 /src/reuser/agent/reuser
 /src/reuser/agent/version.php
-/src/reuser/agent/reuser
 /src/copyright/agent/ecc
 /src/copyright/VERSION-ecc
 /src/copyright/VERSION-keyword
@@ -187,3 +193,5 @@ ubuntu-*
 
 # PHPUnit cache
 .phpunit.result.cache
+*-Xunit.xml
+/phpenv/

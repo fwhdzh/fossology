@@ -1,22 +1,11 @@
 <?php
-/***********************************************************
- Copyright (C) 2014 Hewlett-Packard Development Company, L.P.
- Copyright (c) 2021-2022 Orange
+/*
+ SPDX-FileCopyrightText: © 2014 Hewlett-Packard Development Company, L.P.
+ SPDX-FileCopyrightText: © 2021-2022 Orange
  Contributors: Piotr Pszczola, Bartlomiej Drozdz
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- ***********************************************************/
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 
 use Fossology\Lib\Auth\Auth;
 use Fossology\Lib\Db\DbManager;
@@ -70,7 +59,7 @@ class UserEditPage extends DefaultPlugin
    * 2) User has chosen a user to edit from the 'userid' select list  \n
    * 3) User hit submit to update user data\n
    */
-  protected function handle(Request $request)
+  function handle(Request $request)
   {
     global $SysConf;
     /* Is the session owner an admin? */
@@ -375,7 +364,7 @@ class UserEditPage extends DefaultPlugin
    *
    * \return TRUE if the session user is an admin.  Otherwise, return FALSE
    */
-  private function IsSessionAdmin($UserRec)
+  function IsSessionAdmin($UserRec)
   {
     return ($UserRec['user_perm'] == PLUGIN_DB_ADMIN);
   }
@@ -436,7 +425,7 @@ class UserEditPage extends DefaultPlugin
       if (!empty($UserRec['email_notify'])) {
         $UserRec['email_notify'] = 'y';
       }
-      $UserRec['user_agent_list'] = userAgents();
+      $UserRec['user_agent_list'] = is_null($request->get('user_agent_list')) ? userAgents() : $request->get('user_agent_list');
       $UserRec['default_bucketpool_fk'] = intval($request->get("default_bucketpool_fk"));
     }
     return $UserRec;
@@ -452,17 +441,17 @@ class UserEditPage extends DefaultPlugin
    * @uses Fossology::UI::Api::Helper::RestHelper::validateTokenRequest()
    * @uses Fossology::UI::Api::Helper::DbHelper::insertNewTokenKey()
    */
-  private function generateNewToken(Request $request)
+  function generateNewToken(Request $request)
   {
     global $container;
 
     $user_pk = Auth::getUserId();
-    $tokenName = GetParm('pat_name', PARM_STRING);
-    $tokenExpiry = GetParm('pat_expiry', PARM_STRING);
+    $tokenName = $request->get('pat_name');
+    $tokenExpiry = $request->get('pat_expiry');
     if ($_SESSION[Auth::USER_LEVEL] < 3) {
       $tokenScope = 'r';
     } else {
-      $tokenScope = GetParm('pat_scope', PARM_STRING);
+      $tokenScope = $request->get('pat_scope');
     }
     $tokenScope = array_search($tokenScope, RestHelper::SCOPE_DB_MAP);
     $restHelper = $container->get('helper.restHelper');
@@ -504,7 +493,7 @@ class UserEditPage extends DefaultPlugin
    * template. Also check if the token is expired.
    * @return array
    */
-  private function getListOfActiveTokens()
+  function getListOfActiveTokens()
   {
     $user_pk = Auth::getUserId();
     $sql = "SELECT pat_pk, user_fk, expire_on, token_scope, token_name, created_on, active " .
@@ -533,7 +522,7 @@ class UserEditPage extends DefaultPlugin
    * Get a list of expired tokens for current user.
    * @return array
    */
-  private function getListOfExpiredTokens()
+  function getListOfExpiredTokens()
   {
     $user_pk = Auth::getUserId();
     $sql = "SELECT pat_pk, user_fk, expire_on, token_scope, token_name, created_on " .

@@ -1,21 +1,10 @@
 <?php
-/***********************************************************
- * Copyright (C) 2019 Siemens AG
- * Author: Gaurav Mishra <mishra.gaurav@siemens.com>
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- **********************************************************/
+/*
+ SPDX-FileCopyrightText: © 2019 Siemens AG
+ Author: Gaurav Mishra <mishra.gaurav@siemens.com>
+
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 namespace Fossology\UI\Ajax;
 
 use Fossology\Lib\Db\DbManager;
@@ -92,7 +81,7 @@ class AjaxManageToken extends DefaultPlugin
    * @param string $hostname Host issuing the token
    * @returns array Array with success status and token.
    */
-  private function revealToken($tokenPk, $hostname)
+  function revealToken($tokenPk, $hostname="")
   {
     global $container;
     $restDbHelper = $container->get("helper.dbHelper");

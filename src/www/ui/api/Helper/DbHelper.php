@@ -1,20 +1,9 @@
 <?php
-/***************************************************************
-Copyright (C) 2017 Siemens AG
+/*
+ SPDX-FileCopyrightText: © 2017 Siemens AG
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-version 2 as published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- ***************************************************************/
+ SPDX-License-Identifier: GPL-2.0-only
+*/
 
 /**
  * @file
@@ -251,11 +240,11 @@ FROM $tableName WHERE $idRowName = $1", [$id],
   {
     if ($id == null) {
       $usersSQL = "SELECT user_pk, user_name, user_desc, user_email,
-                  email_notify, root_folder_fk, user_perm, user_agent_list FROM users;";
+                  email_notify, root_folder_fk, group_fk, user_perm, user_agent_list, default_bucketpool_fk FROM users;";
       $statement = __METHOD__ . ".getAllUsers";
     } else {
       $usersSQL = "SELECT user_pk, user_name, user_desc, user_email,
-                email_notify, root_folder_fk, user_perm, user_agent_list FROM users
+                email_notify, root_folder_fk, group_fk, user_perm, user_agent_list, default_bucketpool_fk FROM users
                 WHERE user_pk = $1;";
       $statement = __METHOD__ . ".getSpecificUser";
     }
@@ -274,10 +263,10 @@ FROM $tableName WHERE $idRowName = $1", [$id],
         ($row["user_pk"] == $currentUser)) {
         $user = new User($row["user_pk"], $row["user_name"], $row["user_desc"],
           $row["user_email"], $row["user_perm"], $row["root_folder_fk"],
-          $row["email_notify"], $row["user_agent_list"]);
+          $row["email_notify"], $row["user_agent_list"], $row["group_fk"], $row["default_bucketpool_fk"]);
       } else {
         $user = new User($row["user_pk"], $row["user_name"], $row["user_desc"],
-          null, null, null, null, null);
+          null, null, null, null, null, null);
       }
       $users[] = $user->getArray();
     }
